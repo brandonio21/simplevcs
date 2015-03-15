@@ -7,6 +7,9 @@
  * The purpose of this file is to define the strings that are used throughout
  * SVCS. This will allow for easy customization before compiling.
  ******************************************************************************/
+#ifndef SVCS_STRINGS
+#define SVCS_STRINGS
+
 #define ERROR_TOO_MANY_COMMANDS "Error: svcs only accepts 1 command. \
   You have supplied %d commands\n"
 
@@ -16,3 +19,4 @@
 
 
 #define ERROR_DIR_EXISTS "Error: .svcs directory already exists!\n"
+#endif

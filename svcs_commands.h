@@ -7,6 +7,8 @@
  * The purpose of this file is to provide templates to the basic command 
  * strings for SVCS.
  ******************************************************************************/
+#ifndef SVCS_COMMANDS
+#define SVCS_COMMANDS
 
 /* All commands have the following:
  * <NAME>_COMMAND
@@ -15,3 +17,4 @@
 
 #define SETUP_COMMAND "setup"
 #define SETUP_SHORTHAND "s"
+#endif
