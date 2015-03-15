@@ -9,6 +9,7 @@
  * diff and patch UNIX commands. Some of the workings of Simple VCS have
  * been inspired by git, the only VCS I have really used.
  ******************************************************************************/
+/* TODO: Fix memory leaks with Valgrind */
 #include <unistd.h> 
 #include <stdio.h>  
 #include <stdlib.h>
@@ -39,8 +40,8 @@ int main(int argc, char** argv)
   /* First thing we need to do is check for flags. */
   int c;
   int argIndex;
-  char* command;
-  char* callingDirectory;
+  char* command = NULL;
+  char* callingDirectory = NULL;
 
   while ((c = getopt(argc, argv, "")) != -1)
   {
@@ -66,7 +67,7 @@ int main(int argc, char** argv)
   /* We have only one command. Get the command and prepare for usage */
   command = argv[optind];
   int result;
-  char* message;
+  char* message = NULL;
   if (strcmp(command, SETUP_COMMAND) == 0 ||
       strcmp(command, SETUP_SHORTHAND) == 0)
   {
@@ -75,6 +76,7 @@ int main(int argc, char** argv)
     callingDirectory = strndup(argv[0], 
         strlen(argv[0]) - strlen(callingDirectory) + 1);
     result = setup(callingDirectory, &message);
+    free(callingDirectory);
   }
   else
   {
