@@ -30,6 +30,7 @@
 #define WATCH_DIR CONFIG_DIRECTORY"/0"
 
 int setup(char*, char**);
+int watch(char*, char**);
 
 /* Function:   int main(int, char**)
  * Parameters: argc - The number of arguments provided
@@ -106,6 +107,8 @@ int main(int argc, char** argv)
   if (result == EXIT_FAILURE)
   {
     printf(message);
+    if (message)
+      free(message);
     return EXIT_FAILURE;
   }
 }
@@ -153,7 +156,7 @@ int watch(char* filePath, char** message)
   statResults = stat(filePath, NULL);
   if (statResults == -1)
   {
-    sprintf(*message, ERROR_FILE_DOES_NOT_EXIST, filePath);
+    asprintf(message, ERROR_FILE_DOES_NOT_EXIST, filePath);
     return EXIT_FAILURE;
   }
 
@@ -174,7 +177,7 @@ int watch(char* filePath, char** message)
   if (fileCopy(sourceFile, destFile) == EXIT_FAILURE)
   {
     /* An error occured with the copy */
-    sprintf(*message, ERROR_WATCH_COPY_FAIL, sourceFile);
+    asprintf(**message, ERROR_WATCH_COPY_FAIL, sourceFile);
   }
 
   /* Now the file is copied so it is considered to be watched. */
