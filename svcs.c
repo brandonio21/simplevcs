@@ -23,6 +23,7 @@
 #include "svcs_commands.h"
 #include "svcs_strings.h"
 #include "svcs_identifiers.h"
+#include "svcs_utils.h"
 
 #define CONFIG_DIRECTORY ".svcs"
 #define INFO_FILE CONFIG_DIRECTORY"/information.dat"
@@ -140,7 +141,7 @@ int watch(char* filePath, char** message)
   statResults = stat(filePath, NULL);
   if (statResults == -1)
   {
-    sprintf(message, ERROR_FILE_DOES_NOT_EXIST, filePath);
+    sprintf(*message, ERROR_FILE_DOES_NOT_EXIST, filePath);
     return EXIT_FAILURE;
   }
 
@@ -161,12 +162,9 @@ int watch(char* filePath, char** message)
   if (fileCopy(sourceFile, destFile) == EXIT_FAILURE)
   {
     /* An error occured with the copy */
-    sprintf(message, ERROR_WATCH_COPY_FAIL, sourceFile);
+    sprintf(*message, ERROR_WATCH_COPY_FAIL, sourceFile);
   }
 
   /* Now the file is copied so it is considered to be watched. */
 }
   
-
-}
-

@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int fileCopy(FILE source, FILE destination)
+int fileCopy(FILE* source, FILE* destination)
 {
   /* First create the buffer */
   char buffer[BUFSIZ];
