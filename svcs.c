@@ -18,6 +18,8 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <libgen.h>
+#include <errno.h>
+#include <limits.h>
 
 
 #include "svcs_commands.h"
@@ -76,15 +78,12 @@ int main(int argc, char** argv)
   command = argv[optind++];
   int result;
   char* message = NULL;
+  char* currentPath = strcat(dirname(argv[0]), "/");
   if (strcmp(command, SETUP_COMMAND) == 0 ||
       strcmp(command, SETUP_SHORTHAND) == 0)
   {
     /* The setup command has been called, parse the path */
-    callingDirectory = strrchr(argv[0], '/');
-    callingDirectory = strndup(argv[0], 
-        strlen(argv[0]) - strlen(callingDirectory) + 1);
-    result = setup(callingDirectory, &message);
-    free(callingDirectory);
+    result = setup(currentPath, &message);
   }
   else if (strcmp(command, WATCH_COMMAND) == 0 ||
            strcmp(command, WATCH_SHORTHAND) == 0)
@@ -107,8 +106,6 @@ int main(int argc, char** argv)
   if (result == EXIT_FAILURE)
   {
     printf(message);
-    if (message)
-      free(message);
     return EXIT_FAILURE;
   }
 }
@@ -148,12 +145,14 @@ int watch(char* filePath, char** message)
 {
   /* First thing we need to do is see if the specified file exists */
   int statResults;
+  struct stat fileInfo;
   char* destPath;
   FILE* sourceFile;
   FILE* destFile;
 
   /* Call stat on the file to see if it exists */
-  statResults = stat(filePath, NULL);
+  printf(filePath);
+  statResults = stat(filePath, &fileInfo);
   if (statResults == -1)
   {
     asprintf(message, ERROR_FILE_DOES_NOT_EXIST, filePath);
@@ -178,8 +177,10 @@ int watch(char* filePath, char** message)
   {
     /* An error occured with the copy */
     asprintf(**message, ERROR_WATCH_COPY_FAIL, sourceFile);
+    return EXIT_FAILURE;
   }
 
   /* Now the file is copied so it is considered to be watched. */
+  return EXIT_SUCCESS;
 }
   
