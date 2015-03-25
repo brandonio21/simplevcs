@@ -17,4 +17,7 @@
 
 #define SETUP_COMMAND "setup"
 #define SETUP_SHORTHAND "s"
+
+#define WATCH_COMMAND "watch"
+#define WATCH_SHORTHAND "w"
 #endif

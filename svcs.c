@@ -71,7 +71,7 @@ int main(int argc, char** argv)
   }
 
   /* We have only one command. Get the command and prepare for usage */
-  command = argv[optind];
+  command = argv[optind++];
   int result;
   char* message = NULL;
   if (strcmp(command, SETUP_COMMAND) == 0 ||
@@ -83,6 +83,17 @@ int main(int argc, char** argv)
         strlen(argv[0]) - strlen(callingDirectory) + 1);
     result = setup(callingDirectory, &message);
     free(callingDirectory);
+  }
+  else if (strcmp(command, WATCH_COMMAND) == 0 ||
+           strcmp(command, WATCH_SHORTHAND) == 0)
+  {
+    /* The watch command has been called. Make sure that a file was provided */
+    if (argc - optind == 0)
+    {
+      printf(ERROR_WATCH_MUST_SPECIFY_FILE);
+      return EXIT_FAILURE;
+    }
+    result = watch(argv[optind], &message);
   }
   else
   {
