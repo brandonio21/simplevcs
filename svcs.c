@@ -58,13 +58,14 @@ int main(int argc, char** argv)
   }
 
   /* Now that flags have been checked, let's check to make sure there is
-   * only one command */
-  if (argc - optind > 1)
+   * more than zero commands */
+  /*if (argc - optind > 1)
   {
     printf(ERROR_TOO_MANY_COMMANDS, argc - optind);
     return EXIT_FAILURE;
   }
-  else if (argc - optind == 0)
+  */
+  if (argc - optind == 0)
   {
     printf(ERROR_NO_COMMANDS);
     return EXIT_FAILURE;
