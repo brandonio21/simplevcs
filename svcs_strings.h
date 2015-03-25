@@ -19,4 +19,7 @@
 
 
 #define ERROR_DIR_EXISTS "Error: .svcs directory already exists!\n"
+#define ERROR_FILE_DOES_NOT_EXIST "Error: File %s doesn't exist.\n"
+
+#define ERROR_WATCH_COPY_FAIL "Error: Could not copy %s to watch directory.\n"
 #endif
