@@ -9,6 +9,7 @@
  * diff and patch UNIX commands. Some of the workings of Simple VCS have
  * been inspired by git, the only VCS I have really used.
  ******************************************************************************/
+
 /* TODO: Fix memory leaks with Valgrind */
 #include <unistd.h> 
 #include <stdio.h>  
@@ -29,8 +30,8 @@
 #define INFO_FILE CONFIG_DIRECTORY"/information.dat"
 #define WATCH_DIR CONFIG_DIRECTORY"/0/"
 
-int setup(char*, char**);
-int watch(char*, char**);
+int setup(const char*, char**);
+int watch(const char*, char**);
 
 /* Function:   int main(int, char**)
  * Parameters: argc - The number of arguments provided
@@ -108,11 +109,22 @@ int main(int argc, char** argv)
   }
 }
 
-int setup(char* path, char** message)
+/* Function:   setup(char*, char**)
+ * Parameters: path - The path of the directory to initialize as a svcs dir
+ *             message - A pointer to a string that will contain error msgs
+ * Return:     EXIT_SUCCESS - No error occured
+ *             EXIT_FAILURE - Error(s) occurred and message is set
+ * This function sets up the SVCS directory in the path specified by creating
+ * the directory (If it doesn't exist) and creating an information file that
+ * is filled with information pertaining to the SVCS directory.
+ */
+int setup(const char* path, char** message)
 {
   /* First thing we need to do is see if the config directory already
    * exists */
-  char* configPath = strcat(path, CONFIG_DIRECTORY);
+  char configPath[BUFSIZ];
+  strcpy(configPath, path);
+  strcat(configPath, CONFIG_DIRECTORY);
   struct stat configDir;
   int statResults;
   FILE* informationFile;
@@ -132,6 +144,13 @@ int setup(char* path, char** message)
   /* Now that the directory has been created, create the information file that
    * contains the creation date */
   informationFile = fopen(INFO_FILE, "w");
+  /* Make sure that it was opened properly */
+  if (informationFile == NULL)
+  {
+    *message = ERROR_SETUP_INVALID_INFO_FILE;
+    return EXIT_FAILURE;
+  }
+
   fprintf(informationFile, "%s:%d%d%d%d%d%d\n", CREATION_DATE, tm.tm_mon + 1,
       tm.tm_mday, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
   fclose(informationFile);
@@ -139,7 +158,17 @@ int setup(char* path, char** message)
   return EXIT_SUCCESS;
 }
 
-int watch(char* filePath, char** message)
+/* Function:   watch(char*, char**)
+ * Parameters: filePath - The path to the file to watch
+ *             message -  A pointer to a string that will contain error msgs
+ * Return:     EXIT_SUCCESS - No error occured
+ *             EXIT_FAILURE - Error(s) occurred and message is set
+ * This function creates the watch directory (If it doesn't exist) and then
+ * makes a copy of the specified file in the watch directory. This will allow
+ * us to diff the contents of the file in the watch directory with files that
+ * are being changed. 
+ */
+int watch(const char* filePath, char** message)
 {
   /* First thing we need to do is see if the specified file exists */
   int statResults;
@@ -147,6 +176,7 @@ int watch(char* filePath, char** message)
   char destPath[BUFSIZ];
   FILE* sourceFile;
   FILE* destFile;
+  char watchFilePath[BUFSIZ];
 
   /* Call stat on the file to see if it exists */
   statResults = stat(filePath, &fileInfo);
@@ -167,10 +197,21 @@ int watch(char* filePath, char** message)
 
   /* Good. The watch directory and file to watch are present. Now copy the 
    * file to watch into the watch directory */
+  strcpy(watchFilePath, filePath);
   strcpy(destPath, WATCH_DIR);
-  strcat(destPath, basename(filePath));
+  strcat(destPath, watchFilePath);
   sourceFile = fopen(filePath, "r");
   destFile = fopen(destPath, "w");
+  if (sourceFile == NULL)
+  {
+    asprintf(message, ERROR_WATCH_READ_FAIL, filePath);
+    return EXIT_FAILURE;
+  }
+  if (destFile == NULL)
+  {
+    asprintf(message, ERROR_WATCH_WRITE_FAIL, filePath);
+    return EXIT_FAILURE;
+  }
   if (fileCopy(sourceFile, destFile) == EXIT_FAILURE)
   {
     /* An error occured with the copy */
@@ -181,4 +222,3 @@ int watch(char* filePath, char** message)
   /* Now the file is copied so it is considered to be watched. */
   return EXIT_SUCCESS;
 }
-  
