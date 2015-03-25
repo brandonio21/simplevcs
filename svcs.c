@@ -27,7 +27,7 @@
 
 #define CONFIG_DIRECTORY ".svcs"
 #define INFO_FILE CONFIG_DIRECTORY"/information.dat"
-#define WATCH_DIR CONFIG_DIRECTORY"/0"
+#define WATCH_DIR CONFIG_DIRECTORY"/0/"
 
 int setup(char*, char**);
 int watch(char*, char**);
@@ -144,12 +144,11 @@ int watch(char* filePath, char** message)
   /* First thing we need to do is see if the specified file exists */
   int statResults;
   struct stat fileInfo;
-  char* destPath;
+  char destPath[BUFSIZ];
   FILE* sourceFile;
   FILE* destFile;
 
   /* Call stat on the file to see if it exists */
-  printf(filePath);
   statResults = stat(filePath, &fileInfo);
   if (statResults == -1)
   {
@@ -159,7 +158,7 @@ int watch(char* filePath, char** message)
 
   /* We are sure that the file exists. Now check to see if the watch
    * directory exists */
-  statResults = stat(WATCH_DIR, NULL);
+  statResults = stat(WATCH_DIR, &fileInfo);
   if (statResults == -1)
   {
     /* The watch directory doesn't exist. Create it */
@@ -168,13 +167,14 @@ int watch(char* filePath, char** message)
 
   /* Good. The watch directory and file to watch are present. Now copy the 
    * file to watch into the watch directory */
-  destPath = strcat(WATCH_DIR, basename(filePath));
+  strcpy(destPath, WATCH_DIR);
+  strcat(destPath, basename(filePath));
   sourceFile = fopen(filePath, "r");
   destFile = fopen(destPath, "w");
   if (fileCopy(sourceFile, destFile) == EXIT_FAILURE)
   {
     /* An error occured with the copy */
-    asprintf(**message, ERROR_WATCH_COPY_FAIL, sourceFile);
+    asprintf(message, ERROR_WATCH_COPY_FAIL, sourceFile);
     return EXIT_FAILURE;
   }
 
