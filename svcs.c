@@ -18,8 +18,6 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <libgen.h>
-#include <errno.h>
-#include <limits.h>
 
 
 #include "svcs_commands.h"
