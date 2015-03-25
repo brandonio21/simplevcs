@@ -16,12 +16,15 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <time.h>
 
 
 #include "svcs_commands.h"
 #include "svcs_strings.h"
+#include "svcs_identifiers.h"
 
 #define CONFIG_DIRECTORY ".svcs"
+#define INFO_FILE CONFIG_DIRECTORY"/information.dat"
 
 int setup(char*, char**);
 
@@ -99,6 +102,9 @@ int setup(char* path, char** message)
   char* configPath = strcat(path, CONFIG_DIRECTORY);
   struct stat configDir;
   int statResults;
+  FILE* informationFile;
+  time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
 
   /* Call stat on where our directory should go to see if it exists */
   statResults = stat(configPath, &configDir);
@@ -109,5 +115,15 @@ int setup(char* path, char** message)
   }
 
   mkdir(configPath, 0700);
+
+  /* Now that the directory has been created, create the information file that
+   * contains the creation date */
+  /* First, get the current time */
+  informationFile = fopen(INFO_FILE, "w");
+  fprintf(informationFile, "%s:%d%d%d%d%d%d\n", CREATION_DATE, tm.tm_mon + 1,
+      tm.tm_mday, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
+  fclose(informationFile);
+  
+
   return EXIT_SUCCESS;
 }
