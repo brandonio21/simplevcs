@@ -20,4 +20,7 @@
 
 #define WATCH_COMMAND "watch"
 #define WATCH_SHORTHAND "w"
+
+#define ADD_COMMAND "add"
+#define ADD_SHORTHAND "a"
 #endif

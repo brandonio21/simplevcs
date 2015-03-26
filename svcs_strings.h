@@ -26,4 +26,7 @@
 #define ERROR_WATCH_COPY_FAIL "Error: Could not copy %s to watch directory.\n"
 #define ERROR_WATCH_READ_FAIL "Error: Could not open %s for reading.\n"
 #define ERROR_WATCH_WRITE_FAIL "Error: Could not open %s for writing.\n"
+
+#define ERROR_ADD_MUST_SPECIFY_FILE "Error: Must specify file to add.\n"
+#define ERROR_ADD_LINK_FAILED "Error: Could not create a link for %s.\n"
 #endif

@@ -29,9 +29,11 @@
 #define CONFIG_DIRECTORY ".svcs"
 #define INFO_FILE CONFIG_DIRECTORY"/information.dat"
 #define WATCH_DIR CONFIG_DIRECTORY"/0/"
+#define STAGE_DIR CONFIG_DIRECTORY"/stage/"
 
 int setup(const char*, char**);
 int watch(const char*, char**);
+int add(const char*, char**);
 
 /* Function:   int main(int, char**)
  * Parameters: argc - The number of arguments provided
@@ -94,6 +96,17 @@ int main(int argc, char** argv)
       return EXIT_FAILURE;
     }
     result = watch(argv[optind], &message);
+  }
+  else if (strcmp(command, ADD_COMMAND) == 0 ||
+           strcmp(command, ADD_SHORTHAND) == 0)
+  {
+    /* The add command has been called. Make sure that a file was provided */
+    if (argc - optind == 0)
+    {
+      printf(ERROR_ADD_MUST_SPECIFY_FILE);
+      return EXIT_FAILURE;
+    }
+    result = add(argv[optind], &message);
   }
   else
   {
@@ -220,5 +233,40 @@ int watch(const char* filePath, char** message)
   }
 
   /* Now the file is copied so it is considered to be watched. */
+  return EXIT_SUCCESS;
+}
+
+int add(const char* filePath, char** message)
+{
+  int statResults;
+  struct stat fileInformation;
+  char stageFilename[BUFSIZ];
+  char workingFilePath[BUFSIZ];
+
+  /* First, make sure that the file exists */
+  statResults = stat(filePath, &fileInformation);
+  if (statResults == -1)
+  {
+    asprintf(message, ERROR_FILE_DOES_NOT_EXIST, filePath);
+    return EXIT_FAILURE;
+  }
+
+  /* Now make sure that the stage directory exists */
+  statResults = stat(STAGE_DIR, &fileInformation);
+  if (statResults == -1)
+    mkdir(STAGE_DIR, 0700);
+
+  /* The stage directory and file to stage are present. Make the link */
+  strcpy(workingFilePath, filePath);
+  strcpy(stageFilename, STAGE_DIR);
+  strcat(stageFilename, basename(workingFilePath));
+  printf("checking %s\n", workingFilePath);
+  printf("Copying %s\n", filePath);
+  printf("To %s\n", stageFilename);
+  if (link(filePath, stageFilename) == -1)
+  {
+    asprintf(message, ERROR_ADD_LINK_FAILED, filePath);
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
