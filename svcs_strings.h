@@ -20,7 +20,10 @@
 
 #define ERROR_DIR_EXISTS "Error: .svcs directory already exists!\n"
 #define ERROR_FILE_DOES_NOT_EXIST "Error: File %s doesn't exist.\n"
+#define ERROR_SETUP_INVALID_INFO_FILE "Error: Could not create information file\n";
 
 #define ERROR_WATCH_MUST_SPECIFY_FILE "Error: Must specify file to watch.\n"
 #define ERROR_WATCH_COPY_FAIL "Error: Could not copy %s to watch directory.\n"
+#define ERROR_WATCH_READ_FAIL "Error: Could not open %s for reading.\n"
+#define ERROR_WATCH_WRITE_FAIL "Error: Could not open %s for writing.\n"
 #endif
