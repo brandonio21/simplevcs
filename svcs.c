@@ -125,6 +125,7 @@ int main(int argc, char** argv)
     printf(message);
     return EXIT_FAILURE;
   }
+  return EXIT_SUCCESS;
 }
 
 /* Function:   setup(char*, char**)
@@ -233,7 +234,7 @@ int watch(const char* filePath, char** message)
   if (fileCopy(sourceFile, destFile) == EXIT_FAILURE)
   {
     /* An error occured with the copy */
-    asprintf(message, ERROR_WATCH_COPY_FAIL, sourceFile);
+    asprintf(message, ERROR_WATCH_COPY_FAIL, filePath);
     return EXIT_FAILURE;
   }
 
