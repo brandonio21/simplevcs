@@ -11,6 +11,11 @@
  ******************************************************************************/
 
 /* TODO: Fix memory leaks with Valgrind */
+/* TODO: Calling "add" on a file without first calling "setup" should give an
+ *       error message telling the user to call "setup" */
+/* TODO: Calling "watch" on a file without first calling "setup" should give
+ *       an error message telling the user to call "setup" */
+
 #include <unistd.h> 
 #include <stdio.h>  
 #include <stdlib.h>

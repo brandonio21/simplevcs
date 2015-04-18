@@ -12,3 +12,10 @@ simple. Here are a few things that simpleVCS can do:
 `svcs list` lists all previous submissions  
 `svcs compact` compacts all svcs data so that it can be shared.  
 `svcs revert` changes files to the state they were in in previous submissions.  
+
+
+
+*So far*, the workflow looks like this:
+`svcs setup` to setup the .svcs directory
+`svcs watch` to tell svcs which files are going to be version-controlled
+`svcs add`   to add files to the staging area before "submit" is called
