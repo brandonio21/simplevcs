@@ -1,2 +1,3 @@
 svcs
 .svcs/
+*.o
