@@ -1,4 +1,9 @@
 GCC_FLAGS=-Wall -D_GNU_SOURCE
+CC=gcc
 
-default:
-	gcc -o svcs ${GCC_FLAGS} svcs.c
+lint:
+	$(CC) -o svcs svcs.c $(GCC_FLAGS)
+
+%.c:
+	
+
